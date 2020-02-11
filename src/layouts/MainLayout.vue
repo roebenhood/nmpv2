@@ -1,4 +1,4 @@
-<template>
+<template onload="load()">
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
@@ -103,12 +103,12 @@
       <!-- Table of todays tours -->
       <div class="q-pa-md">
         <q-table
-          title="Treats"
-          :data="data"
-          :columns="columns"
-          row-key="name"
-          :sort-method="customSort"
-          binary-state-sort
+        title="Treats"
+        :data="data"
+        :columns="columns"
+        row-key="name"
+        sortable: true
+        binary-state-sort
         />
       </div>
 
@@ -120,6 +120,7 @@
 <script>
 import EssentialLink from "components/EssentialLink";
 import { mapActions } from "vuex";
+import { mapState } from "vuex";
 
 export default {
   name: "MainLayout",
@@ -127,9 +128,12 @@ export default {
   components: {
     EssentialLink
   },
-
   data() {
     return {
+      ...mapState("store", ["detail"]),
+      data: [
+        // this.$store.state.detail
+      ],
       columns: [
         {
           name: "name",
@@ -144,15 +148,15 @@ export default {
           headerClasses: "bg-primary text-white"
         },
         {
-          name: "school",
+          name: "company",
           align: "left",
           label: "School | Institution | Group",
-          field: "school",
+          field: "company",
           sortable: true,
           style: "max-width: 10px"
         },
         { name: "pax", label: "Pax", field: "pax", sortable: true },
-        { name: "status", label: "Building", field: "building" },
+        { name: "status", label: "Building", field: "building" }
       ],
       prompt: false,
       reservationData: {
@@ -167,11 +171,26 @@ export default {
       }
     };
   },
+  // methods: {
+  //   ...mapActions("store", ["bookDate"]),
+  //   ...mapActions("store", ["getReservations"]),
+  //   submitReservation() {
+  //     this.bookDate(this.reservationData);
+  //   },
+  //   load() {
+  //     console.log('nag load')
+  //     this.getReservations();
+  //   }
+  // }
   methods: {
     ...mapActions("store", ["bookDate"]),
+    ...mapActions("store", ["retrieveReservations"]),
     submitReservation() {
       this.bookDate(this.reservationData);
     }
+  },
+  mounted() {
+    this.retrieveReservations();
   }
 };
 </script>
